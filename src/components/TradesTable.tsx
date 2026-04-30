@@ -169,9 +169,21 @@ export function TradesTable({ trades }: Props) {
                   </span>
                 </td>
                 <td className="py-1 px-1.5">
-                  <span className="text-neutral-400 truncate block max-w-[100px]" title={trade.event_slug || trade.market_ticker}>
-                    {(trade.event_slug || trade.market_ticker).replace('btc-updown-5m-', '')}
-                  </span>
+                  {trade.event_slug ? (
+                    <a
+                      href={`https://polymarket.com/event/${trade.event_slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 hover:underline truncate block max-w-[100px] transition-colors"
+                      title={trade.event_slug}
+                    >
+                      {trade.event_slug.replace('btc-updown-5m-', '')}
+                    </a>
+                  ) : (
+                    <span className="text-neutral-400 truncate block max-w-[100px]" title={trade.market_ticker}>
+                      {trade.market_ticker}
+                    </span>
+                  )}
                 </td>
                 <td className="py-1 px-1.5 text-center">
                   <span className={`text-[10px] font-semibold uppercase ${isUp ? 'text-green-500' : 'text-red-500'}`}>
