@@ -223,7 +223,7 @@ export function SignalsTable({ signals, weatherSignals, onSimulateTrade, isSimul
                   {(sig.modelProb * 100).toFixed(0)}%
                 </td>
                 <td className="py-1 px-1.5 text-right text-blue-400 tabular-nums">
-                  {sig.suggestedSize > 0 ? `$${sig.suggestedSize.toFixed(0)}` : '-'}
+                  {sig.suggestedSize > 0 ? sig.suggestedSize.toFixed(0) : '-'}
                 </td>
                 <td className="py-1 px-1.5 text-right">
                   {sig.actionable && sig.category === 'BTC' && (
