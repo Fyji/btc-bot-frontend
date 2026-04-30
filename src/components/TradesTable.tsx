@@ -1,9 +1,39 @@
 import { formatDistanceToNow } from 'date-fns'
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Trade } from '../types'
 import { platformStyles } from '../utils'
+
+function getResolveTime(trade: Trade): number | null {
+  const slug = trade.event_slug || ''
+  const match = slug.match(/(\d{10,})$/)
+  if (match) return parseInt(match[1], 10) * 1000
+  return null
+}
+
+function CountdownCell({ resolveMs }: { resolveMs: number }) {
+  const [remaining, setRemaining] = useState(() => Math.max(0, resolveMs - Date.now()))
+
+  useEffect(() => {
+    if (remaining <= 0) return
+    const interval = setInterval(() => {
+      setRemaining(Math.max(0, resolveMs - Date.now()))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [resolveMs, remaining])
+
+  if (remaining <= 0) return <span className="text-neutral-600">resolved</span>
+
+  const totalSec = Math.floor(remaining / 1000)
+  const min = Math.floor(totalSec / 60)
+  const sec = totalSec % 60
+  return (
+    <span className="text-amber-400 tabular-nums">
+      {min}:{sec.toString().padStart(2, '0')}
+    </span>
+  )
+}
 
 interface Props {
   trades: Trade[]
@@ -97,6 +127,7 @@ export function TradesTable({ trades }: Props) {
               P&L <SortIcon column="pnl" />
             </div>
           </th>
+          <th className="py-1.5 px-1.5 font-medium text-right">TTR</th>
           <th
             className="py-1.5 px-1.5 font-medium text-right cursor-pointer hover:text-neutral-400"
             onClick={() => handleSort('timestamp')}
@@ -160,6 +191,13 @@ export function TradesTable({ trades }: Props) {
                   ) : (
                     <span className="text-neutral-600">-</span>
                   )}
+                </td>
+                <td className="py-1 px-1.5 text-right text-[10px]">
+                  {(() => {
+                    const resolveMs = getResolveTime(trade)
+                    if (!resolveMs) return <span className="text-neutral-600">-</span>
+                    return <CountdownCell resolveMs={resolveMs} />
+                  })()}
                 </td>
                 <td className="py-1 px-1.5 text-right text-[10px] text-neutral-600 tabular-nums">
                   {formatDistanceToNow(new Date(trade.timestamp.endsWith('Z') ? trade.timestamp : trade.timestamp + 'Z'), { addSuffix: false })}
