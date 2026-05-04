@@ -183,8 +183,15 @@ function App() {
               ${btcPrice.price.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </span>
             <span className={`text-[10px] tabular-nums ${btcPrice.change_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <span className="text-neutral-600">24h</span>{' '}
               {btcPrice.change_24h >= 0 ? '+' : ''}{btcPrice.change_24h.toFixed(2)}%
             </span>
+            {data?.microstructure && (
+              <span className={`text-[10px] tabular-nums ${data.microstructure.momentum_15m >= 0 ? 'text-green-500/70' : 'text-red-500/70'}`}>
+                <span className="text-neutral-600">15m</span>{' '}
+                {data.microstructure.momentum_15m >= 0 ? '+' : ''}{data.microstructure.momentum_15m.toFixed(2)}%
+              </span>
+            )}
           </div>
         )}
 
