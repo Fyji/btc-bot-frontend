@@ -10,6 +10,7 @@ import { Terminal } from './components/Terminal'
 import { MicrostructurePanel } from './components/MicrostructurePanel'
 import { CalibrationPanel } from './components/CalibrationPanel'
 import { EdgeDistribution } from './components/EdgeDistribution'
+import { BtcPriceChart } from './components/BtcPriceChart'
 import { formatCountdown } from './utils'
 import type { BtcWindow } from './types'
 
@@ -67,8 +68,11 @@ function RefreshBar({ interval }: { interval: number }) {
   )
 }
 
+type CenterTab = 'equity' | 'btc'
+
 function App() {
   const queryClient = useQueryClient()
+  const [centerTab, setCenterTab] = useState<CenterTab>('equity')
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['dashboard'],
@@ -270,7 +274,28 @@ function App() {
           {/* Equity Chart - top area (replaces Globe) */}
           <div className="relative h-[300px] md:h-[58%]">
             <div className="px-2 py-1 border-b border-neutral-800 flex items-center justify-between shrink-0">
-              <span className="text-[10px] text-neutral-500 uppercase tracking-wider">Equity</span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCenterTab('equity')}
+                  className={`px-1.5 py-0.5 text-[10px] uppercase tracking-wider transition-colors ${
+                    centerTab === 'equity'
+                      ? 'text-green-400 bg-green-500/10 border border-green-500/20'
+                      : 'text-neutral-500 border border-transparent hover:text-neutral-300'
+                  }`}
+                >
+                  Equity
+                </button>
+                <button
+                  onClick={() => setCenterTab('btc')}
+                  className={`px-1.5 py-0.5 text-[10px] uppercase tracking-wider transition-colors ${
+                    centerTab === 'btc'
+                      ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20'
+                      : 'text-neutral-500 border border-transparent hover:text-neutral-300'
+                  }`}
+                >
+                  BTC Price
+                </button>
+              </div>
               <div className="flex items-center gap-3">
                 <span className="text-neutral-500 text-[10px] uppercase tracking-wider">Markets</span>
                 <span className="text-amber-500 text-[10px] tabular-nums">{actionableCount} actionable</span>
@@ -280,7 +305,11 @@ function App() {
               </div>
             </div>
             <div className="h-[calc(100%-28px)] p-2">
-              <EquityChart data={equityCurve} initialBankroll={stats.bankroll - stats.total_pnl} />
+              {centerTab === 'equity' ? (
+                <EquityChart data={equityCurve} initialBankroll={stats.bankroll - stats.total_pnl} />
+              ) : (
+                <BtcPriceChart />
+              )}
             </div>
           </div>
 
