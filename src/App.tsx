@@ -188,7 +188,7 @@ function App() {
             </span>
             {data?.microstructure && (
               <span className={`text-[10px] tabular-nums ${data.microstructure.momentum_15m >= 0 ? 'text-green-500/70' : 'text-red-500/70'}`}>
-                <span className="text-neutral-600">15m</span>{' '}
+                <span className="text-neutral-600">15m mom</span>{' '}
                 {data.microstructure.momentum_15m >= 0 ? '+' : ''}{data.microstructure.momentum_15m.toFixed(2)}%
               </span>
             )}
